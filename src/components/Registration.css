@@ -1,0 +1,18 @@
+.registration-form {
+  text-align: left;
+}
+
+.registration-form__input-group label {
+  font-weight: bold;
+  display: inline-block;
+  width: 150px;
+  margin-right: 10px;
+}
+.mandatory,
+.registration-form__input-group-validation {
+  color: red;
+}
+    
+.registration-form__input-group-validation {
+  min-height: 1em;
+}
