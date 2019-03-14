@@ -32,8 +32,17 @@
   align-items: center;
   width: 50%;
   height: 100%;
+}
+.player select {
+  font-family: 'VT323', monospace;
+  border: none;
+  flex: 0 1 auto;
   font-size: 2em;
+  background-color: transparent;
+  outline:none;
   text-transform: uppercase;
+  text-align: center;
+  text-align-last: center;
 }
 .info {
   flex: 1 1 auto;

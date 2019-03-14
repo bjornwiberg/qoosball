@@ -3,6 +3,12 @@ import './Field.css';
 
 class Field extends Component {
 
+  // TODO:
+  // 1. swap places button
+  // 2. add goal / own goal buttons
+  // 3. Timer
+
+
   constructor(props) {
     super(props);
     this.state = {
@@ -14,23 +20,40 @@ class Field extends Component {
       },
       team2: {
         id: 2,
-        score: 10,
+        score: 9,
         player1: 'Rikard',
         player2: 'Björn'
       },
     };
+    this.playerChanged = this.playerChanged.bind(this);
   }
 
-  goal(player) {
-
+  playerChanged(teamId, player) {
+    console.log(teamId, player);
   }
 
   getTeam(team, player1, player2) {
     return (
       <div className={`team ${team === 1 ? 'left team1' : 'right team2'}`} id="team1">
-        <div className="player" onClick={this.goal(player1)}>{player1}</div>
+        <div className="player">
+          <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={() => { this.playerChanged(team, player1); }} >
+            <option value="">Select player</option>
+            <option value={'Aiham'}>{'Aiham'}</option>
+            <option value={'Rikard'}>{'Rikard'}</option>
+            <option value={'Jonas'}>{'Jonas'}</option>
+            <option value = { 'Björn'} > { 'Björn'}</option >
+          </select>
+        </div>
         <div className="swap"></div>
-        <div className="player" onClick={this.goal(player2)}>{player2}</div>
+        <div className="player">
+          <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={() => { this.playerChanged(team, player2); }} >
+            <option value="">Select player</option>
+            <option value={'Aiham'}>{'Aiham'}</option>
+            <option value={'Rikard'}>{'Rikard'}</option>
+            <option value={'Jonas'}>{'Jonas'}</option>
+            <option value={'Björn'} > {'Björn'}</option>
+          </select>
+        </div>
       </div>
     );
   }
@@ -46,9 +69,9 @@ class Field extends Component {
             <div className="circle goal-left" />
             <div className="circle goal-right" />
             <div className="score">
-              <span className="team2">5</span>
+              <span className="team2">{team2.score}</span>
               {'   :   '}
-              <span className="team1">7</span>
+            <span className="team1">{team1.score}</span>
             </div>
           </div>
         {this.getTeam(team2.id, team2.player1, team2.player2)}
