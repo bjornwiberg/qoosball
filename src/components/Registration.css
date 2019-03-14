@@ -20,6 +20,7 @@ input[type=text] {
 button {
   background-color: #009844;
   border: none;
+  cursor: pointer;
   transition: 0.3s all;
   color: #fff;
   padding: 0 2em;
