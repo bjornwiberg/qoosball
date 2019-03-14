@@ -1,8 +1,74 @@
-.registration-form {
-  text-align: left;
+select,
+button,
+input {
+  outline: none;
+  border: 1px solid #ccc;
+  transition: 0.3s all;
 }
 
-.registration-form__input-group label {
+button:focus,
+select:focus,
+input:focus {
+  filter: drop-shadow(0 0 2px #009844);
+}
+
+button,
+input[type=text] {
+  line-height: 2em;
+}
+
+button {
+  background-color: #009844;
+  border: none;
+  transition: 0.3s all;
+  color: #fff;
+  padding: 0 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+button:focus,
+button:hover {
+  background-color: #006937;
+}
+
+
+.registration-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.registration-form__header {
+  font-size: 2em;
+  box-shadow: inset 0 -1px #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.registration-form__input-group {
+      align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.registration-form__input-group input[type=text],
+.registration-form__input-group select {
+  width: 200px;
+}
+
+.registration-form__input-group-fields {
+  text-align: right;
+}
+
+.registration-form__input-group-fields > label input {
+  margin-right: 10px;
+}
+
+.registration-form__input-group-fields > label + label {
+  margin-left: 20px;
+}
+
+.registration-form__input-group > label {
   font-weight: bold;
   display: inline-block;
   width: 150px;
@@ -14,5 +80,10 @@
 }
     
 .registration-form__input-group-validation {
-  min-height: 1em;
+  min-height: 1.5em;
+  text-align: right;
+}
+
+.registration-form__button-group {
+  text-align: right;
 }
