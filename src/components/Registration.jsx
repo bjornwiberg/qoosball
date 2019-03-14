@@ -1,6 +1,7 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import countryList from 'country-list';
 import './Registration.css';
+import { writeUserData } from '../firebase';
 
 const Registration = () => {
   const [dominantHand, updateDominantHand] = useState('');
@@ -12,8 +13,7 @@ const Registration = () => {
 
   const submitForm = () => {
     if (dominantHand && name && nationality && slackId && trigram) {
-      console.log('save to database');
-      return;
+      return writeUserData(trigram, name, dominantHand, nationality, race, slackId); // this is async
     }
     console.log('error');
   }
@@ -72,7 +72,7 @@ const Registration = () => {
         <label for="foos-nationality">{fields.nationality} <span class="mandatory">*</span></label>
         <select name="nationality" onChange={e => updateNationality(e.target.value)}>
           <option value="">Choose a country</option>
-          {Object.entries(countryList.getCodeList()).map(([code, name ]) => (
+          {Object.entries(countryList.getCodeList()).map(([code, name]) => (
             <option key={code} value={code}>{name}</option>
           ))}
         </select>
