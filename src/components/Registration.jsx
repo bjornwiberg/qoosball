@@ -1,6 +1,7 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import countryList from 'country-list';
 import './Registration.css';
+import { writeUserData } from '../firebase';
 
 const Registration = () => {
   const [dominantHand, updateDominantHand] = useState(null);
@@ -12,8 +13,7 @@ const Registration = () => {
 
   const submitForm = () => {
     if (dominantHand && name && nationality && slackId && trigram) {
-      console.log('save to database');
-      return;
+      return writeUserData(trigram, name, dominantHand, nationality, race, slackId); // this is async
     }
     console.log('error');
   }
@@ -50,8 +50,8 @@ const Registration = () => {
       <div className="registration-form__input-group">
         <label htmlFor="foos-trigram">{fields.trigram} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-        <input id="foos-trigram" type="text" onChange={e => updateTrigram(e.target.value)} />
-      </div>
+          <input id="foos-trigram" type="text" onChange={e => updateTrigram(e.target.value)} />
+        </div>
       </div>
       <div className="registration-form__input-group-validation">
         {validationStatus('trigram', trigram)}
@@ -91,6 +91,9 @@ const Registration = () => {
               <option key={code} value={code}>{name}</option>
             ))}
           </select>
+        </div>
+        <div className="registration-form__input-group-validation">
+          {validationStatus('nationality', nationality)}
         </div>
       </div>
       <div className="registration-form__input-group-validation">
