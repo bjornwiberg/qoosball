@@ -1,0 +1,16 @@
+.field {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+.field .team {
+  width: 100%;
+  display: flex;
+  justify-content: space-between
+}
+.field .team .player {
+
+}
