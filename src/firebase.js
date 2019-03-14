@@ -27,15 +27,15 @@ firebase.auth().onAuthStateChanged(function (user) {
 const getUserByTrigram = (trigram) => {
     return new Promise(function (resolve, reject) {
         firebase.database().ref().child('users').orderByChild('trigram').equalTo(trigram).once('value', snapshot => {
-            const userCount = Object.keys(snapshot.val()).length;
-            resolve((userCount === 1) ? snapshot.val() : null);
+            const res = snapshot.val();
+            resolve((res && Object.keys(res).length === 1) ? res : null);
         });
     });
 };
 
 const writeUserData = (trigram, name, dominantHand, nationality, race, slackId) => {
-    return getUserByTrigram(trigram).then(user=>{
-        if(typeof user === null){
+    return getUserByTrigram(trigram).then(user => {
+        if (user === null) {
             const userId = firebase.database().ref().child('users').push().key;
             return firebase.database().ref('users/' + userId).set({
                 trigram: trigram,
@@ -45,14 +45,13 @@ const writeUserData = (trigram, name, dominantHand, nationality, race, slackId) 
                 race: race,
                 slackId: slackId
             });
-        }else{
+        } else {
             console.warn('error user already exists');
             return null;
 
         }
     });
 }
-// writeUserData('aaz', 'Aiham', 'right', 'Jamaican', 'Elf', 'aihazm');
 
 export {
     firebase,
