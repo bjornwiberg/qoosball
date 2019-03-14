@@ -1,3 +1,6 @@
+* {
+  box-sizing: border-box;
+}
 select,
 button,
 input {
@@ -15,6 +18,10 @@ input:focus {
 button,
 input[type=text] {
   line-height: 2em;
+}
+
+input[type=text] {
+  padding: 0 1em;
 }
 
 button {
