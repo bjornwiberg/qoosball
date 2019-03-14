@@ -6,25 +6,25 @@ import { writeUserData } from '../firebase';
 const Registration = () => {
   const [dominantHand, updateDominantHand] = useState(null);
   const [name, updateName] = useState(null);
-  const [nationality, updateNationality] = useState(null);
+  const [country, updateCountry] = useState(null);
   const [race, updateRace] = useState(null);
   const [slackId, updateSlackId] = useState(null);
   const [trigram, updateTrigram] = useState(null);
 
   const submitForm = () => {
-    if (dominantHand && name && nationality && slackId && trigram) {
-      return writeUserData(trigram, name, dominantHand, nationality, race, slackId); // this is async
+    if (dominantHand && name && country && slackId && trigram) {
+      return writeUserData(trigram, name, dominantHand, country, race, slackId); // this is async
     }
     console.log('error');
   }
 
   const fields = {
-    name: 'Name',
-    trigram: 'Trigram',
+    country: 'Country',
     dominantHand: 'Dominant Hand',
+    name: 'Name',
     race: 'Race',
     slackId: 'Slack Id',
-    nationality: 'Nationality',
+    trigram: 'Trigram',
   };
 
   const validationStatus = (field, value) => {
@@ -83,21 +83,18 @@ const Registration = () => {
         {validationStatus('slackId', slackId)}
       </div>
       <div className="registration-form__input-group">
-        <label htmlFor="foos-nationality">{fields.nationality} <span className="mandatory">*</span></label>
+        <label>{fields.country} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-          <select name="nationality" onChange={e => updateNationality(e.target.value)}>
+          <select name="country" onChange={e => updateCountry(e.target.value)}>
             <option value="">Choose a country</option>
             {Object.entries(countryList.getCodeList()).map(([code, name ]) => (
               <option key={code} value={code}>{name}</option>
             ))}
           </select>
         </div>
-        <div className="registration-form__input-group-validation">
-          {validationStatus('nationality', nationality)}
-        </div>
       </div>
       <div className="registration-form__input-group-validation">
-        {validationStatus('nationality', nationality)}
+        {validationStatus('country', country)}
       </div>
       <div className="registration-form__button-group">
         <button onClick={submitForm}>Save</button>

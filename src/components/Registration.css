@@ -1,26 +1,35 @@
+* {
+  box-sizing: border-box;
+  transition: 0.3s all;
+}
+
 select,
 button,
 input {
   outline: none;
   border: 1px solid #ccc;
-  transition: 0.3s all;
 }
 
 button:focus,
 select:focus,
-input:focus {
+input[type=text]:focus {
   filter: drop-shadow(0 0 2px #009844);
 }
+
 
 button,
 input[type=text] {
   line-height: 2em;
 }
 
+input[type=text] {
+  padding: 0 1em;
+}
+
 button {
   background-color: #009844;
   border: none;
-  transition: 0.3s all;
+  cursor: pointer;
   color: #fff;
   padding: 0 2em;
   text-transform: uppercase;
@@ -57,7 +66,16 @@ button:hover {
 }
 
 .registration-form__input-group-fields {
-  text-align: right;
+  display: flex;
+}
+
+.registration-form__input-group-fields > label {
+  display: flex;
+  padding: 2px;
+}
+
+.registration-form__input-group-fields > label:focus-within {
+  box-shadow: 0 0 2px 0 #009844;
 }
 
 .registration-form__input-group-fields > label input {
