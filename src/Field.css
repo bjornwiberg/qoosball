@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=VT323');
+
 .field {
+  font-family: 'VT323', monospace;
   height: 100vh;
+  max-width: 100vw;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -28,7 +32,7 @@
   align-items: center;
   width: 50%;
   height: 100%;
-  font-size: 1.5em;
+  font-size: 2em;
   text-transform: uppercase;
 }
 .info {
@@ -36,11 +40,13 @@
   position: relative;
   display: flex;
   width: 100%;
+  max-width: 100vw;
   align-items: center;
   justify-content: center;
   border-top: 2px solid rgba(0,0,0,0.3);
   border-bottom: 2px solid rgba(0,0,0,0.3);
   box-sizing: border-box;
+  overflow: hidden;
 }
 .divider {
   position: relative;
@@ -51,18 +57,25 @@
 }
 .circle {
   position: absolute;
-  width: 150px;
-  height: 150px;
+  width: 30vh;
+  height: 30vh;
   border: 2px solid black;
   border-radius: 50%;
   opacity: 0.3;
 }
 .goal-left {
-  left: -75px;
+  left: -15vh;;
 }
 .goal-right {
-  right: -75px;
+  right: -15vh;;
 }
 .score {
-
+  font-size: 12em;
+  position: absolute;
+}
+.team2 {
+  color: #368a99;
+}
+.team1 {
+  color: #eb9a31;
 }
