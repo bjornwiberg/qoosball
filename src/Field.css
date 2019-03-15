@@ -22,6 +22,12 @@
   padding: 0 10%;
 }
 
+.field .team .score {
+  font-size: 2rem;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
 .field .team .unlock {
   font-weight: bold;
   display: inline-block;
@@ -106,7 +112,7 @@
 .goal-right {
   right: -15vh;;
 }
-.score {
+.info .score {
   font-size: 12em;
   position: absolute;
 }

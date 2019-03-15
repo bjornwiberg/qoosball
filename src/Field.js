@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Field.css';
-import { getUsers as getUsersFromFirebase, startGame, getOrCreateTeam } from './firebase';
+import { getUsers as getUsersFromFirebase, setGoal, startGame, getOrCreateTeam } from './firebase';
 
 class Field extends Component {
 
@@ -32,6 +32,7 @@ class Field extends Component {
 
   state = {
     gameStarted: false,
+    gameId: '',
     playerPositions: {},
     selectedPlayers: [],
     team1: {
@@ -42,7 +43,7 @@ class Field extends Component {
     },
     team2: {
       id: 2,
-      score: 9,
+      score: 0,
       player1: 'Rikard',
       player2: 'Björn'
     },
@@ -115,20 +116,32 @@ class Field extends Component {
     return this.isPositionTaken(key) ? playerPositions[key] : null;
   }
 
+  addGoal(data) {
+    setGoal({...data});
+  }
 
-  getTeamPositionSelection(team, position) {
-    const player = this.getNameForPosition(team, position);
-    const { gameStarted } = this.state;
-    if (gameStarted) return <div className="player">{player}</div>
+  getTeamPositionSelection(team, side) {
+    const player = this.getNameForPosition(team, side);
+    const trigram = this.getTrigramForPosition(team, side);
+    const { gameStarted, gameId } = this.state;
+    const position = team === 1 ? 'blue' : 'orange';
+    const addGoalData = { trigram, gameId, position };
+    if (gameStarted) return (
+      <div className="player">
+        {player}
+        <div className="score" onClick={() => this.addGoal(addGoalData)}><span role="img" aria-label="Add score">🥅</span></div>
+      </div>
+    )
+
     return (
       <div className="player">
-        <select disabled={gameStarted} className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, position)} >
+        <select disabled={gameStarted} className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, side)} >
           <option value="">{player}</option>
           {this.getAvailableUsers().map(({ name, trigram }) => (
             <option key={trigram} value={trigram}>{name}</option>
           ))}
         </select>
-        {this.isPositionTaken(`${team}${position}`) && <span className="unlock" onClick={() => this.unlockPosition(`${team}${position}`)}>X</span>}
+        {this.isPositionTaken(`${team}${side}`) && <span className="unlock" onClick={() => this.unlockPosition(`${team}${side}`)}>X</span>}
       </div>
     );
   }
@@ -155,12 +168,17 @@ class Field extends Component {
   }
 
   async startGame() {
-    this.setState({ gameStarted: true });
     try {
       const team1 = await getOrCreateTeam(this.getTrigramForPosition(1, 'first'), this.getTrigramForPosition(1, 'second'));
       const team2 = await getOrCreateTeam(this.getTrigramForPosition(2, 'first'), this.getTrigramForPosition(2, 'second'));
       if (team1 && team2) {
-        this.setState({ gameId: await startGame({side: 'orange', teamId1: Object.keys(team1)[0], teamId2: Object.keys(team2)[0]}) });
+        try {
+          const gameId = await startGame({side: 'orange', teamId1: Object.keys(team1)[0], teamId2: Object.keys(team2)[0]});
+          console.log({ gameId });
+          this.setState({ gameId, gameStarted: true });
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         console.error('something is fishy in denmark!');
       }
