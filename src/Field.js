@@ -33,6 +33,7 @@ class Field extends Component {
   state = {
     gameStarted: false,
     gameId: '',
+    gameOver: false,
     playerPositions: {},
     selectedPlayers: [],
     scores: [0, 0],
@@ -132,7 +133,9 @@ class Field extends Component {
       this.swapTeamMembers(2)
     }
 
-    this.setState({scores: [team1NewScore, team2NewScore]});
+    const gameOver = (team1Score === 10 === 10 || team2NewScore === 10);
+
+    this.setState({gameOver, scores: [team1NewScore, team2NewScore]});
   }
 
   getTeamPositionSelection(team, side) {
@@ -212,6 +215,12 @@ class Field extends Component {
     return gameStarted ? '' : <div className="select-users-info">{content}</div>;
   }
 
+  getGameOverInfo() {
+    const { gameOver } = this.state;
+
+    return gameOver && <div className="select-users-info select-users-info__full-page">GAME OVER</div>;
+  }
+
   render() {
     const { team1, team2, scores: [team1Score, team2Score] } = this.state;
     return (
@@ -219,6 +228,7 @@ class Field extends Component {
         {this.getTeam(team1.id, team1.player1, team1.player2)}
         <div className="info">
           {this.getStartInfo()}
+          {this.getGameOverInfo()}
           <div className="divider"></div>
           <div className="circle" />
           <div className="circle goal-left" />

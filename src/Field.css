@@ -88,6 +88,10 @@
   font-size: 2em;
 }
 
+.select-users-info__full-page {
+  position: fixed;
+}
+
 .select-users-info button {
   padding: 0 1em;
 }
