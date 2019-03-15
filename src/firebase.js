@@ -23,12 +23,24 @@ firebase.auth().onAuthStateChanged(function (user) {
         console.log('firebase', 'logged out')
     }
 });
+/** Users */
+const getUsers = (callback)=>{
+    if(callback && typeof callback === 'function' ){
+        firebase.database().ref().child('users').on('value', data =>{
+            callback(data.val());
+        });
+    }
+    return new Promise(function (resolve) {
+        firebase.database().ref().child('users').once('value', data =>{
+            resolve(data.val());
+        });
+    });
+}
 
 const getUserByTrigram = (trigram) => {
     return new Promise(function (resolve) {
-        firebase.database().ref().child('users').orderByChild('trigram').equalTo(trigram).once('value', snapshot => {
-            const res = snapshot.val();
-            resolve((res && Object.keys(res).length === 1) ? res : null);
+        firebase.database().ref().child(`users/${trigram}`).once('value', snapshot => {
+            resolve(snapshot.val());
         });
     });
 };
@@ -36,8 +48,7 @@ const getUserByTrigram = (trigram) => {
 const writeUserData = (trigram, name, dominantHand, nationality, race, slackId) => {
     return getUserByTrigram(trigram).then(user => {
         if (user === null) {
-            const userId = firebase.database().ref().child('users').push().key;
-            return firebase.database().ref('users/' + userId).set({
+            return firebase.database().ref('users/' + trigram).set({
                 trigram: trigram,
                 name: name,
                 dominantHand: dominantHand,
@@ -48,14 +59,11 @@ const writeUserData = (trigram, name, dominantHand, nationality, race, slackId) 
         } else {
             console.warn('error user already exists');
             return null;
-
         }
     });
 }
 
-/** Teams
- * 
- */
+/** Teams **/
 const getTeams = () => {
     return new Promise(resolve => {
         firebase.database().ref().child('teams').once('value', (snapshot) => {
@@ -83,10 +91,35 @@ const getOrCreateTeam = (trigram1, trigram2) => {
         }
     });
 }
+/** Games */
+const startGame = ({side, teamId1, teamId2}) => {
+    const gameId = firebase.database().ref().child('games').push().key;
+    return firebase.database().ref('games/' + gameId).set({
+        side,
+        teamId1,
+        teamId2,
+        start: Date.now(),
+        finish: ''
+    }).then(gameId);
+};
+
+const finishGame = (gameId) => {
+    return firebase.database().ref('games/' + gameId).update({
+        finish: Date.now()
+    });
+};
+
+/** Goals */
+
+
 
 export {
     firebase,
+    getUsers,
+    getUserByTrigram,
+    writeUserData,
     getTeams,
     getOrCreateTeam,
-    writeUserData
+    startGame,
+    finishGame
 };
