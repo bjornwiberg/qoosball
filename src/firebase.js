@@ -24,14 +24,14 @@ firebase.auth().onAuthStateChanged(function (user) {
     }
 });
 /** Users */
-const getUsers = (callback)=>{
-    if(callback && typeof callback === 'function' ){
-        firebase.database().ref().child('users').on('value', data =>{
+const getUsers = (callback) => {
+    if (callback && typeof callback === 'function') {
+        firebase.database().ref().child('users').on('value', data => {
             callback(data.val());
         });
     }
     return new Promise(function (resolve) {
-        firebase.database().ref().child('users').once('value', data =>{
+        firebase.database().ref().child('users').once('value', data => {
             resolve(data.val());
         });
     });
@@ -72,6 +72,14 @@ const getTeams = () => {
     });
 };
 
+const getTeamById = (teamId) => {
+    return new Promise(resolve => {
+        firebase.database().ref().child(`teams/${teamId}`).once('value', (snapshot) => {
+            resolve(snapshot.val());
+        });
+    });
+};
+
 const getOrCreateTeam = (trigram1, trigram2) => {
     return Promise.all([getUserByTrigram(trigram1), getUserByTrigram(trigram1)]).then(users => { // check if users exists
         if (users[0] && users[1]) {
@@ -92,7 +100,7 @@ const getOrCreateTeam = (trigram1, trigram2) => {
     });
 }
 /** Games */
-const startGame = ({side, teamId1, teamId2}) => {
+const startGame = ({ side, teamId1, teamId2 }) => {
     const gameId = firebase.database().ref().child('games').push().key;
     return firebase.database().ref('games/' + gameId).set({
         side,
@@ -109,9 +117,58 @@ const finishGame = (gameId) => {
     });
 };
 
+const getGame = (gameId) => {
+    return new Promise(resolve => {
+        return firebase.database().ref('games/' + gameId).once('value', data => {
+            resolve(data.val())
+        });
+    });
+}
+
 /** Goals */
+const setGoal = ({ trigram, gameId, position }) => {
+    const gameId = firebase.database().ref().child('games').push().key;
+    return firebase.database().ref('games/' + gameId).set({
+        trigram,
+        gameId,
+        timestamp: Date.now(),
+        position
+    });
+}
 
+const getGameGoals = (gameId) => {
+    return new Promise(resolve => {
+        firebase.database().ref('goals').orderByChild('gameId').equalTo(gameId).once('value', data => {
+            resolve(data.val())
+        });
+    });
+};
 
+const getScore = (gameId) => {
+    getGame(gameId).then(game => {
+        if (!game) {
+            console.log('invalid game');
+            return null;
+        }
+        Promise.all([getGameGoals(gameId), getTeamById(game.teamId1), getTeamById(game.teamId2)]).then(res => {
+            const allGameGoals = res[0];
+            const team1 = [res[1].trigram1, res[1].trigram1];
+            const team2 = [res[2].trigram1, res[2].trigram1];
+            const score = {};
+            score[game.teamId1] = [];
+            score[game.teamId2] = [];
+            allGameGoals.forEach(goal => {
+                if (team1.contains(goal.trigram)) {
+                    score[game.teamId1].push(goal);
+                } else if (team2.contains(goal.trigram)) {
+                    score[game.teamId2].push(goal);
+                } else {
+                    console.error('Something is fishy in Denmark')
+                }
+            });
+        });
+    });
+}
 
 export {
     firebase,
@@ -121,5 +178,7 @@ export {
     getTeams,
     getOrCreateTeam,
     startGame,
-    finishGame
+    finishGame,
+    setGoal,
+    getScore,
 };
