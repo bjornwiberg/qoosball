@@ -25,7 +25,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 });
 
 const getUserByTrigram = (trigram) => {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         firebase.database().ref().child('users').orderByChild('trigram').equalTo(trigram).once('value', snapshot => {
             const res = snapshot.val();
             resolve((res && Object.keys(res).length === 1) ? res : null);
@@ -53,7 +53,40 @@ const writeUserData = (trigram, name, dominantHand, nationality, race, slackId) 
     });
 }
 
+/** Teams
+ * 
+ */
+const getTeams = () => {
+    return new Promise(resolve => {
+        firebase.database().ref().child('teams').once('value', (snapshot) => {
+            resolve(snapshot.val());
+        });
+    });
+};
+
+const getOrCreateTeam = (trigram1, trigram2) => {
+    return Promise.all([getUserByTrigram(trigram1), getUserByTrigram(trigram1)]).then(users => { // check if users exists
+        if (users[0] && users[1]) {
+            return getTeams().then(teams => {
+                if (teams && teams.length > 0) {
+                    return teams[0];
+                }
+                const teamId = firebase.database().ref().child('teams').push().key;
+                return firebase.database().ref('teams/' + teamId).set({
+                    trigram1,
+                    trigram2
+                });
+            });
+
+        } else {
+            throw new Error('something is fishy in danemark!');
+        }
+    });
+}
+
 export {
     firebase,
+    getTeams,
+    getOrCreateTeam,
     writeUserData
 };
