@@ -105,27 +105,27 @@ class Field extends Component {
     return name;
   }
 
-  getTeam(team, player1, player2) {
-    const firstPlayer = this.getUserForPosition(team, 'first');
-    const secondPlayer = this.getUserForPosition(team, 'second');
+  getTeamPositionSelection(team, position) {
+    const player = this.getUserForPosition(team, position);
+    return (
+      <div className="player">
+        <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, position)} >
+          <option value="">{player}</option>
+          {this.getAvailableUsers().map(({ name, trigram }) => (
+            <option key={trigram} value={trigram}>{name}</option>
+          ))}
+        </select>
+        {this.isPositionTaken(`${team}${position}`) && <span className="unlock" onClick={() => this.unlockPosition(`${team}${position}`)}>X</span>}
+      </div>
+    );
+  }
 
+  getTeam(team, player1, player2) {
     return (
       <div className={`team ${team === 1 ? 'left team1' : 'right team2'}`} id="team1">
-        <div className="player">
-          <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, 'first')} >
-            <option value="">{firstPlayer}</option>
-            {this.getAvailableUsers().map(({ name, trigram }) => <option key={trigram} value={trigram}>{name}</option>)}
-          </select>
-          {this.isPositionTaken(`${team}first`) && <span className="unlock" onClick={() => this.unlockPosition(`${team}first`)}>X</span>}
-        </div>
+        {this.getTeamPositionSelection(team, 'first')}
         <div className="swap"></div>
-        <div className="player">
-          <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, 'second')} >
-            <option value="">{secondPlayer}</option>
-            {this.getAvailableUsers().map(({ name, trigram }) => <option key={trigram} value={trigram}>{name}</option>)}
-          </select>
-          {this.isPositionTaken(`${team}second`) && <span className="unlock" onClick={() => this.unlockPosition(`${team}second`)}>X</span>}
-        </div>
+        {this.getTeamPositionSelection(team, 'second')}
       </div>
     );
   }
