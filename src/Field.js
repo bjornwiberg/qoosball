@@ -23,6 +23,7 @@ class Field extends Component {
     this.startGame = this.startGame.bind(this);
     this.getTeamPositionSelection = this.getTeamPositionSelection.bind(this);
     this.getTeam = this.getTeam.bind(this);
+    this.swapTeamMembers = this.swapTeamMembers.bind(this);
   }
 
   async componentDidMount() {
@@ -137,12 +138,21 @@ class Field extends Component {
     return (
       <div className={`team ${team === 1 ? 'left team1' : 'right team2'}`} id="team1">
         {this.getTeamPositionSelection(team, 'first')}
-        {!gameStarted && <div className="swap" onClick={() => this.swapTeamMembers(team)}><span role="img" aria-label="Swap users">🔁</span></div>}
+        {gameStarted && <div className="swap" onClick={() => this.swapTeamMembers(team)}><span role="img" aria-label="Swap users">🔁</span></div>}
         {this.getTeamPositionSelection(team, 'second')}
       </div>
     );
   }
   swapTeamMembers(team) {
+    const { playerPositions } = this.state;    
+    const firstPlayer = this.getTrigramForPosition(team, 'first');
+    const secondPlayer = this.getTrigramForPosition(team, 'second');
+
+    playerPositions[`${team}first`] = secondPlayer;
+    playerPositions[`${team}second`] = firstPlayer;
+
+    this.setState({ playerPositions });
+
     console.log(`swap team ${team}'s players`);
   }
 
