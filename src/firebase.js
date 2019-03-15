@@ -97,7 +97,7 @@ const getOrCreateTeam = (trigram1, trigram2) => {
                     return firebase.database().ref('teams/' + teamId).set({
                         trigram1,
                         trigram2
-                    }).then(()=>{
+                    }).then(() => {
                         return getTeamById(teamId);
                     })
                 } else {
@@ -119,7 +119,7 @@ const startGame = ({ side, teamId1, teamId2 }) => {
         teamId2,
         start: Date.now(),
         finish: ''
-    }).then(gameId);
+    }).then(() => gameId);
 };
 
 const finishGame = (gameId) => {
@@ -138,7 +138,8 @@ const getGame = (gameId) => {
 
 /** Goals */
 const setGoal = ({ trigram, gameId, position }) => {
-    return firebase.database().ref('games/' + gameId).set({
+    const goalId = firebase.database().ref().child('goals').push().key;
+    return firebase.database().ref('goals/' + goalId).set({
         trigram,
         gameId,
         timestamp: Date.now(),
