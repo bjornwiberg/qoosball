@@ -4,23 +4,33 @@ import './Registration.css';
 import { writeUserData } from '../firebase';
 
 const Registration = () => {
-  const [dominantHand, updateDominantHand] = useState(null);
-  const [name, updateName] = useState(null);
-  const [country, updateCountry] = useState(null);
-  const [race, updateRace] = useState(null);
-  const [slackId, updateSlackId] = useState(null);
-  const [trigram, updateTrigram] = useState(null);
+  const [dominantHand, updateDominantHand] = useState('');
+  const [name, updateName] = useState('');
+  const [country, updateCountry] = useState('');
+  const [race, updateRace] = useState('');
+  const [slackId, updateSlackId] = useState('');
+  const [trigram, updateTrigram] = useState('');
+  const [showRegInfo, updateShowRegInfo] = useState('');
+  const [showValidationInfo, updateShowValidationInfo] = useState(null);
 
-  const submitForm = () => {
+  const submitForm = async () => {
     if (dominantHand && name && country && slackId && trigram) {
-      return writeUserData(trigram, name, dominantHand, country, race, slackId); // this is async
+      console.log('save');
+      try {
+        await writeUserData(trigram, name, dominantHand, country, race, slackId); // this is async
+
+        showThankYouMessage(true);
+      } catch (error) {
+        console.log({ error });
+      }
+    } else {
+        showValidationMessage(true);
     }
-    console.log('error');
   }
 
   const fields = {
-    country: 'Country',
     dominantHand: 'Dominant Hand',
+    country: 'Country',
     name: 'Name',
     race: 'Race',
     slackId: 'Slack Id',
@@ -29,72 +39,94 @@ const Registration = () => {
 
   const validationStatus = (field, value) => {
     return value === ''
-      ? `${fields[field]} must be stated`
+      ? <li>{fields[field]} must be stated</li>
       : '';
   };
 
+  const showValidationMessage = () => {
+    updateShowValidationInfo(true);
+  }
+
+  const showThankYouMessage = () => {
+    updateShowRegInfo(true);
+    updateDominantHand('');
+    updateName('');
+    updateCountry('');
+    updateRace('');
+    updateTrigram('');
+    updateDominantHand('');
+    updateSlackId('');
+  }
+
   return (
     <div className="registration-form">
+      {showValidationInfo && (
+        <div className="registration-form__information">
+          <div className="registration-form__information-title">
+            Error:
+          </div>
+          <ul>
+            {validationStatus('name', name)}
+            {validationStatus('trigram', trigram)}
+            {validationStatus('dominantHand', dominantHand)}
+            {validationStatus('slackId', slackId)}
+            {validationStatus('country', country)}
+          </ul>
+          <button onClick={() => updateShowValidationInfo(false)}>Close</button>
+        </div>
+      )}
+      {showRegInfo && (
+        <div className="registration-form__information">
+          <div className="registration-form__information-title">
+            Thanks for registering
+          </div>
+          <button onClick={() => updateShowRegInfo(false)}>Close</button>
+        </div>
+      )}
       <div className="registration-form__header">
         Register to play
       </div>
       <div className="registration-form__input-group">
         <label htmlFor="foos-name">{fields.name} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-          <input id="foos-name" type="text" onChange={e => updateName(e.target.value)} />
+          <input id="foos-name" type="text" value={name} onChange={e => updateName(e.target.value)} />
         </div>
-      </div>
-      <div className="registration-form__input-group-validation">
-        {validationStatus('name', name)}
       </div>
       <div className="registration-form__input-group">
         <label htmlFor="foos-trigram">{fields.trigram} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-          <input id="foos-trigram" type="text" onChange={e => updateTrigram(e.target.value)} />
+          <input id="foos-trigram" type="text" value={trigram} onChange={e => updateTrigram(e.target.value)} />
         </div>
-      </div>
-      <div className="registration-form__input-group-validation">
-        {validationStatus('trigram', trigram)}
       </div>
       <div className="registration-form__input-group">
         <label>{fields.dominantHand} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-          <label><input type="radio" value="left" name="dominant-hand" onChange={e => updateDominantHand(e.target.value)} />Left</label>
-          <label><input type="radio" value="right" name="dominant-hand" onChange={e => updateDominantHand(e.target.value)} />Right</label>
+          <label><input type="radio" value="left" name="dominant-hand" checked={dominantHand === 'left'} onChange={e => updateDominantHand(e.target.value)} />Left</label>
+          <label><input type="radio" value="right" name="dominant-hand" checked={dominantHand === 'right'} onChange={e => updateDominantHand(e.target.value)} />Right</label>
         </div>
-      </div>
-      <div className="registration-form__input-group-validation">
-        {validationStatus('dominantHand', dominantHand)}
       </div>
       <div className="registration-form__input-group">
         <label htmlFor="foos-race">{fields.race}</label>
         <div className="registration-form__input-group-fields">
-          <input id="foos-race" type="text" onChange={e => updateRace(e.target.value)} />
+          <input id="foos-race" type="text" value={race} onChange={e => updateRace(e.target.value)} />
         </div>
       </div>
-      <div className="registration-form__input-group-validation" />
       <div className="registration-form__input-group">
         <label htmlFor="foos-slack-id">{fields.slackId} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-          <input id="foos-slack-id" type="text" onChange={e => updateSlackId(e.target.value)} />
+          <input id="foos-slack-id" type="text" value={slackId} onChange={e => updateSlackId(e.target.value)} />
         </div>
-      </div>
-      <div className="registration-form__input-group-validation">
-        {validationStatus('slackId', slackId)}
       </div>
       <div className="registration-form__input-group">
         <label>{fields.country} <span className="mandatory">*</span></label>
         <div className="registration-form__input-group-fields">
-          <select name="country" onChange={e => updateCountry(e.target.value)}>
+          <select name="country" value={country} onChange={e => updateCountry(e.target.value)}>
             <option value="">Choose a country</option>
             {Object.entries(countryList.getCodeList()).map(([code, name ]) => (
               <option key={code} value={code}>{name}</option>
             ))}
           </select>
         </div>
-      </div>
-      <div className="registration-form__input-group-validation">
-        {validationStatus('country', country)}
       </div>
       <div className="registration-form__button-group">
         <button onClick={submitForm}>Save</button>

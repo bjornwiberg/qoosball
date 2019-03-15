@@ -47,6 +47,34 @@ button:hover {
   font-size: 14px;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.registration-form__information {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+}
+
+.registration-form__information  button {
+  font-size: 1.5em;
+}
+
+.registration-form__information  ul {
+  margin-top: 0;
+}
+
+.registration-form__information-title {
+  font-size: 2em;
+  margin-bottom: 1em;
 }
 
 .registration-form__header {
@@ -57,9 +85,10 @@ button:hover {
 }
 
 .registration-form__input-group {
-      align-items: center;
+  align-items: center;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .registration-form__input-group input[type=text],
