@@ -98,7 +98,7 @@ class Field extends Component {
   getNameForPosition(team, position) {
     const key = `${team}${position}`;
     const { playerPositions, users } = this.state;
-    let name = position === 'first' ? 'Select first player' : 'Select second player';
+    let name = position === 'first' ? '1st player' : '2nd player';
 
     if (this.isPositionTaken(key)) {
       const trigram = playerPositions[key];
