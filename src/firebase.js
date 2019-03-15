@@ -24,6 +24,19 @@ firebase.auth().onAuthStateChanged(function (user) {
     }
 });
 
+const getUsers = (callback)=>{
+    if(callback && typeof callback === 'function' ){
+        firebase.database().ref().child('users').on('value', data =>{
+            callback(data.val());
+        });
+    }
+    return new Promise(function (resolve) {
+        firebase.database().ref().child('users').once('value', data =>{
+            resolve(data.val());
+        });
+    });
+}
+
 const getUserByTrigram = (trigram) => {
     return new Promise(function (resolve) {
         firebase.database().ref().child('users').orderByChild('trigram').equalTo(trigram).once('value', snapshot => {
@@ -86,6 +99,7 @@ const getOrCreateTeam = (trigram1, trigram2) => {
 
 export {
     firebase,
+    getUsers,
     getTeams,
     getOrCreateTeam,
     writeUserData
