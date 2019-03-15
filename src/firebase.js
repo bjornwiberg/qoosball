@@ -84,14 +84,25 @@ const getOrCreateTeam = (trigram1, trigram2) => {
     return Promise.all([getUserByTrigram(trigram1), getUserByTrigram(trigram1)]).then(users => { // check if users exists
         if (users[0] && users[1]) {
             return getTeams().then(teams => {
-                if (teams && teams.length > 0) {
-                    return teams[0];
+                const res = {};
+                if (teams && Object.keys(teams).length > 0) {
+                    for (const key in teams) {
+                        if ([teams[key].trigram1, teams[key].trigram2].includes(trigram1) && [teams[key].trigram1, teams[key].trigram2].includes(trigram2)) {
+                            res[key] = teams[key];
+                        }
+                    }
                 }
-                const teamId = firebase.database().ref().child('teams').push().key;
-                return firebase.database().ref('teams/' + teamId).set({
-                    trigram1,
-                    trigram2
-                });
+                if (Object.keys(res).length < 1) {
+                    const teamId = firebase.database().ref().child('teams').push().key;
+                    return firebase.database().ref('teams/' + teamId).set({
+                        trigram1,
+                        trigram2
+                    }).then(()=>{
+                        return getTeamById(teamId);
+                    })
+                } else {
+                    return res;
+                }
             });
 
         } else {

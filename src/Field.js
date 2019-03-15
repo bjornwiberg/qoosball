@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Field.css';
-import { getUsers as getUsersFromFirebase } from './firebase';
+import { getUsers as getUsersFromFirebase, startGame, getOrCreateTeam } from './firebase';
 
 class Field extends Component {
 
@@ -16,7 +16,8 @@ class Field extends Component {
     this.playerChanged = this.playerChanged.bind(this);
     this.fetchUsers = this.fetchUsers.bind(this);
     this.getAvailableUsers = this.getAvailableUsers.bind(this);
-    this.getUserForPosition = this.getUserForPosition.bind(this);
+    this.getNameForPosition = this.getNameForPosition.bind(this);
+    this.getTrigramForPosition = this.getTrigramForPosition.bind(this);
     this.isPositionTaken = this.isPositionTaken.bind(this);
     this.unlockPosition = this.unlockPosition.bind(this);
     this.startGame = this.startGame.bind(this);
@@ -64,7 +65,7 @@ class Field extends Component {
 
   playerChanged(e, team, position) {
     let { playerPositions, selectedPlayers } = this.state;
-    const { target: { value: trigram } } = e; 
+    const { target: { value: trigram } } = e;
     const key = `${team}${position}`;
 
     if (this.isPositionTaken(key)) {
@@ -88,11 +89,11 @@ class Field extends Component {
   }
 
   getAvailableUsers() {
-    const { selectedPlayers, users  } = this.state;
+    const { selectedPlayers, users } = this.state;
     return users.filter(({ trigram }) => !selectedPlayers.includes(trigram));
   }
 
-  getUserForPosition(team, position) {
+  getNameForPosition(team, position) {
     const key = `${team}${position}`;
     const { playerPositions, users } = this.state;
     let name = 'Select player';
@@ -105,8 +106,15 @@ class Field extends Component {
     return name;
   }
 
+  getTrigramForPosition(team, position) {
+    const key = `${team}${position}`;
+    const { playerPositions } = this.state;
+    return this.isPositionTaken(key) ? playerPositions[key] : null;
+  }
+
+
   getTeamPositionSelection(team, position) {
-    const player = this.getUserForPosition(team, position);
+    const player = this.getNameForPosition(team, position);
     return (
       <div className="player">
         <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, position)} >
@@ -130,8 +138,19 @@ class Field extends Component {
     );
   }
 
-  startGame() {
+  async startGame() {
     this.setState({ gameStarted: true });
+    try {
+      const team1 = await getOrCreateTeam(this.getTrigramForPosition(1, 'first'), this.getTrigramForPosition(1, 'second'));
+      const team2 = await getOrCreateTeam(this.getTrigramForPosition(2, 'first'), this.getTrigramForPosition(2, 'second'));
+      if (team1 && team2) {
+        this.setState({ gameId: await startGame({side: 'orange', teamId1: Object.keys(team1)[0], teamId2: Object.keys(team2)[0]}) });
+      } else {
+        console.error('something is fishy in denmark!');
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   getStartInfo() {
@@ -146,22 +165,22 @@ class Field extends Component {
   render() {
     const { team1, team2 } = this.state;
     return (
-        <div className="field">
-          {this.getTeam(team1.id, team1.player1, team1.player2)}
-          <div className="info">
-            {this.getStartInfo()}
-            <div className="divider"></div>
-            <div className="circle" />
-            <div className="circle goal-left" />
-            <div className="circle goal-right" />
-            <div className="score">
-              <span className="team2">{team2.score}</span>
-              {'   :   '}
+      <div className="field">
+        {this.getTeam(team1.id, team1.player1, team1.player2)}
+        <div className="info">
+          {this.getStartInfo()}
+          <div className="divider"></div>
+          <div className="circle" />
+          <div className="circle goal-left" />
+          <div className="circle goal-right" />
+          <div className="score">
+            <span className="team2">{team2.score}</span>
+            {'   :   '}
             <span className="team1">{team1.score}</span>
-            </div>
           </div>
-        {this.getTeam(team2.id, team2.player1, team2.player2)}
         </div>
+        {this.getTeam(team2.id, team2.player1, team2.player2)}
+      </div>
     );
   }
 }
