@@ -2,6 +2,27 @@ import React, { Component } from 'react';
 import './Field.css';
 import { getUsers as getUsersFromFirebase, setGoal, startGame, getOrCreateTeam, getScore } from './firebase';
 
+const INITAL_STATE = {
+  gameStarted: false,
+  gameId: '',
+  gameOver: false,
+  playerPositions: {},
+  selectedPlayers: [],
+  scores: [0, 0],
+  team1: {
+    id: 1,
+    score: 0,
+    player1: 'Aiham',
+    player2: 'Jonas'
+  },
+  team2: {
+    id: 2,
+    score: 0,
+    player1: 'Rikard',
+    player2: 'Björn'
+  },
+  users: [],
+};
 class Field extends Component {
 
   // TODO:
@@ -31,25 +52,7 @@ class Field extends Component {
   }
 
   state = {
-    gameStarted: false,
-    gameId: '',
-    gameOver: false,
-    playerPositions: {},
-    selectedPlayers: [],
-    scores: [0, 0],
-    team1: {
-      id: 1,
-      score: 0,
-      player1: 'Aiham',
-      player2: 'Jonas'
-    },
-    team2: {
-      id: 2,
-      score: 0,
-      player1: 'Rikard',
-      player2: 'Björn'
-    },
-    users: [],
+    ...INITAL_STATE,
   };
 
   fetchUsers(data) {
