@@ -127,7 +127,6 @@ const getGame = (gameId) => {
 
 /** Goals */
 const setGoal = ({ trigram, gameId, position }) => {
-    const gameId = firebase.database().ref().child('games').push().key;
     return firebase.database().ref('games/' + gameId).set({
         trigram,
         gameId,
