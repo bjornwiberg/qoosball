@@ -33,6 +33,7 @@ button {
   color: #fff;
   padding: 0 2em;
   text-transform: uppercase;
+  font: inherit;
   font-weight: bold;
 }
 
@@ -43,6 +44,7 @@ button:hover {
 
 
 .registration-form {
+  font-size: 14px;
   display: flex;
   flex-direction: column;
 }

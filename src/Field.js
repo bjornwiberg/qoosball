@@ -16,9 +16,11 @@ class Field extends Component {
     this.getUserForPosition = this.getUserForPosition.bind(this);
     this.isPositionTaken = this.isPositionTaken.bind(this);
     this.unlockPosition = this.unlockPosition.bind(this);
+    this.startGame = this.startGame.bind(this);
   }
 
   state = {
+    gameStarted: false,
     playerPositions: {},
     selectedPlayers: [],
     team1: {
@@ -153,12 +155,26 @@ class Field extends Component {
     );
   }
 
+  startGame() {
+    this.setState({ gameStarted: true });
+  }
+
+  getStartInfo() {
+    const { selectedPlayers, gameStarted } = this.state;
+    const content = selectedPlayers.length === 4
+      ? <button className="start-button" onClick={this.startGame}>Start game</button>
+      : 'Please assign all users to start';
+
+    return gameStarted ? '' : <div className="select-users-info">{content}</div>;
+  }
+
   render() {
     const { team1, team2 } = this.state;
     return (
         <div className="field">
           {this.getTeam(team1.id, team1.player1, team1.player2)}
           <div className="info">
+            {this.getStartInfo()}
             <div className="divider"></div>
             <div className="circle" />
             <div className="circle goal-left" />
