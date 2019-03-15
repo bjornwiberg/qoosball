@@ -118,9 +118,21 @@ class Field extends Component {
   }
 
   async addGoal(data) {
+    const { scores: [team1Score, team2Score] } = this.state;
     setGoal({ ...data });
     const score = await getScore(this.state.gameId);
-    this.setState({scores: [score[Object.keys(score)[0]].length, score[Object.keys(score)[1]].length]});
+    const team1NewScore = score[Object.keys(score)[0]].length;
+    const team2NewScore = score[Object.keys(score)[1]].length;
+
+    if (team1Score === 4 && team1NewScore === 5) {
+      this.swapTeamMembers(1)
+    }
+
+    if (team2Score === 4 && team2NewScore === 5) {
+      this.swapTeamMembers(2)
+    }
+
+    this.setState({scores: [team1NewScore, team2NewScore]});
   }
 
   getTeamPositionSelection(team, side) {
