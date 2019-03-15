@@ -152,8 +152,6 @@ class Field extends Component {
     playerPositions[`${team}second`] = firstPlayer;
 
     this.setState({ playerPositions });
-
-    console.log(`swap team ${team}'s players`);
   }
 
   async startGame() {
