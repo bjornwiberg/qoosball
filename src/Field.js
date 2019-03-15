@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Field.css';
+import { getUsers as getUsersFromFirebase } from './firebase';
 
 class Field extends Component {
 
@@ -11,12 +12,18 @@ class Field extends Component {
 
   constructor(props) {
     super(props);
+
     this.playerChanged = this.playerChanged.bind(this);
+    this.fetchUsers = this.fetchUsers.bind(this);
     this.getAvailableUsers = this.getAvailableUsers.bind(this);
     this.getUserForPosition = this.getUserForPosition.bind(this);
     this.isPositionTaken = this.isPositionTaken.bind(this);
     this.unlockPosition = this.unlockPosition.bind(this);
     this.startGame = this.startGame.bind(this);
+  }
+
+  async componentDidMount() {
+    await getUsersFromFirebase(this.fetchUsers);
   }
 
   state = {
@@ -35,7 +42,13 @@ class Field extends Component {
       player1: 'Rikard',
       player2: 'Björn'
     },
+    users: [],
   };
+
+  fetchUsers(data) {
+    const users = Object.keys(data).map(key => data[key]);
+    this.setState({ users });
+  }
 
   unlockPosition(positionKey) {
     let { playerPositions, selectedPlayers } = this.state;
@@ -74,53 +87,15 @@ class Field extends Component {
     return (playerPositions.hasOwnProperty(key));
   }
 
-  getUsers() {
-    return [
-      {
-        country: 'se',
-        dominantHand: 'Right',
-        name: 'Björn Wiberg',
-        race: 'Elf',
-        slackId: 'bjorn',
-        trigram: 'crx',
-      },
-      {
-        country: 'se',
-        dominantHand: 'Right',
-        name: 'Jonas Hörström',
-        race: 'Goblin',
-        slackId: 'jonas',
-        trigram: 'abc',
-      },
-      {
-        country: 'se',
-        dominantHand: 'Right',
-        name: 'Aiham Azmeh',
-        race: 'Elf',
-        slackId: 'aiham.azmeh',
-        trigram: 'aaz',
-      },
-      {
-        country: 'se',
-        dominantHand: 'Right',
-        name: 'Rikard Samvik',
-        race: 'Hobit',
-        slackId: 'rikard.samvik',
-        trigram: 'rsk',
-      },
-    ];
-  }
-
   getAvailableUsers() {
-    const { selectedPlayers  } = this.state;
-    return this.getUsers().filter(({ trigram }) => !selectedPlayers.includes(trigram));
+    const { selectedPlayers, users  } = this.state;
+    return users.filter(({ trigram }) => !selectedPlayers.includes(trigram));
   }
 
   getUserForPosition(team, position) {
     const key = `${team}${position}`;
-    const { playerPositions } = this.state;
+    const { playerPositions, users } = this.state;
     let name = 'Select player';
-    const users = this.getUsers();
 
     if (this.isPositionTaken(key)) {
       const trigram = playerPositions[key];
