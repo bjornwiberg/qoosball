@@ -3,6 +3,15 @@ import Field from './Field';
 import Registration from './components/Registration';
 import './App.css';
 
+import { getUserByTrigram } from './firebase';
+
+function doStuff(userList){
+  console.log(userList);
+}
+getUserByTrigram('aaz').then(data=>{
+  console.log(data)
+})
+
 class App extends Component {
   render() {
     return (
