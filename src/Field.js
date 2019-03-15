@@ -20,6 +20,8 @@ class Field extends Component {
     this.isPositionTaken = this.isPositionTaken.bind(this);
     this.unlockPosition = this.unlockPosition.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.getTeamPositionSelection = this.getTeamPositionSelection.bind(this);
+    this.getTeam = this.getTeam.bind(this);
   }
 
   async componentDidMount() {
@@ -95,7 +97,7 @@ class Field extends Component {
   getUserForPosition(team, position) {
     const key = `${team}${position}`;
     const { playerPositions, users } = this.state;
-    let name = 'Select player';
+    let name = position === 'first' ? 'Select first player' : 'Select second player';
 
     if (this.isPositionTaken(key)) {
       const trigram = playerPositions[key];
@@ -106,10 +108,13 @@ class Field extends Component {
   }
 
   getTeamPositionSelection(team, position) {
+    const { gameStarted } = this.state;
     const player = this.getUserForPosition(team, position);
+    if (gameStarted) return <div className="player">{player}</div>
+
     return (
       <div className="player">
-        <select className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, position)} >
+        <select disabled={gameStarted} className={`${team === 1 ? 'left team1' : 'right team2'}`} onChange={e => this.playerChanged(e, team, position)} >
           <option value="">{player}</option>
           {this.getAvailableUsers().map(({ name, trigram }) => (
             <option key={trigram} value={trigram}>{name}</option>
@@ -121,13 +126,18 @@ class Field extends Component {
   }
 
   getTeam(team, player1, player2) {
+    const { gameStarted } = this.state;
     return (
       <div className={`team ${team === 1 ? 'left team1' : 'right team2'}`} id="team1">
         {this.getTeamPositionSelection(team, 'first')}
-        <div className="swap"></div>
+        {!gameStarted && <div className="swap" onClick={() => this.swapTeamMembers(team)}><span role="img" aria-label="Swap users">🔁</span></div>}
         {this.getTeamPositionSelection(team, 'second')}
       </div>
     );
+  }
+
+  swapTeamMembers(team) {
+    console.log(`swap team ${team}'s players`);
   }
 
   startGame() {

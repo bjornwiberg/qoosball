@@ -18,10 +18,10 @@
   display: flex;
   justify-content: space-between;
   text-align: center;
-  padding-left: 10%;
-  padding-right: 0;
-  height: 15vh;
+  height: 10vh;
+  padding: 0 10%;
 }
+
 .field .team .unlock {
   font-size: 2em;
   font-weight: bold;
@@ -29,22 +29,27 @@
   width: 3em;
   text-align: center;
 }
-.team.right {
-  padding-right: 10%;
-  padding-left: 0;
-}
 .field .team .player {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50%;
-  height: 100%;
+  width: 40%;
+}
+.field .swap {
+  align-self: center;
+  font-size: 1.5em;
+  cursor: pointer;
+  flex-grow: 1;
+  width: 10%;
+}
+.player {
+  font-size: 2em;
 }
 .player select {
   font-family: 'VT323', monospace;
   border: none;
   flex: 0 1 auto;
-  font-size: 2em;
+  font-size: 1em;
   background-color: transparent;
   outline:none;
   text-transform: uppercase;
