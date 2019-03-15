@@ -156,27 +156,31 @@ const getGameGoals = (gameId) => {
 };
 
 const getScore = (gameId) => {
-    getGame(gameId).then(game => {
+    return getGame(gameId).then(game => {
         if (!game) {
             console.log('invalid game');
             return null;
         }
-        Promise.all([getGameGoals(gameId), getTeamById(game.teamId1), getTeamById(game.teamId2)]).then(res => {
+        return Promise.all([getGameGoals(gameId), getTeamById(game.teamId1), getTeamById(game.teamId2)]).then(res => {
             const allGameGoals = res[0];
-            const team1 = [res[1].trigram1, res[1].trigram1];
-            const team2 = [res[2].trigram1, res[2].trigram1];
+            const team1 = [res[1].trigram1, res[1].trigram2];
+            const team2 = [res[2].trigram1, res[2].trigram2];
             const score = {};
             score[game.teamId1] = [];
             score[game.teamId2] = [];
-            allGameGoals.forEach(goal => {
-                if (team1.contains(goal.trigram)) {
-                    score[game.teamId1].push(goal);
-                } else if (team2.contains(goal.trigram)) {
-                    score[game.teamId2].push(goal);
+            if (!allGameGoals) {
+                return score;
+            }
+            for (const key in allGameGoals) {
+                if (team1.includes(allGameGoals[key].trigram)) {
+                    score[game.teamId1].push(allGameGoals[key]);
+                } else if (team2.includes(allGameGoals[key].trigram)) {
+                    score[game.teamId2].push(allGameGoals[key]);
                 } else {
                     console.error('Something is fishy in Denmark')
                 }
-            });
+            }
+            return score;
         });
     });
 }

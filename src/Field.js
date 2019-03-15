@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Field.css';
-import { getUsers as getUsersFromFirebase, setGoal, startGame, getOrCreateTeam } from './firebase';
+import { getUsers as getUsersFromFirebase, setGoal, startGame, getOrCreateTeam, getScore } from './firebase';
 
 class Field extends Component {
 
@@ -35,6 +35,7 @@ class Field extends Component {
     gameId: '',
     playerPositions: {},
     selectedPlayers: [],
+    scores: [0, 0],
     team1: {
       id: 1,
       score: 0,
@@ -116,8 +117,10 @@ class Field extends Component {
     return this.isPositionTaken(key) ? playerPositions[key] : null;
   }
 
-  addGoal(data) {
-    setGoal({...data});
+  async addGoal(data) {
+    setGoal({ ...data });
+    const score = await getScore(this.state.gameId);
+    this.setState({scores: [score[Object.keys(score)[0]].length, score[Object.keys(score)[1]].length]});
   }
 
   getTeamPositionSelection(team, side) {
@@ -157,7 +160,7 @@ class Field extends Component {
     );
   }
   swapTeamMembers(team) {
-    const { playerPositions } = this.state;    
+    const { playerPositions } = this.state;
     const firstPlayer = this.getTrigramForPosition(team, 'first');
     const secondPlayer = this.getTrigramForPosition(team, 'second');
 
@@ -173,9 +176,10 @@ class Field extends Component {
       const team2 = await getOrCreateTeam(this.getTrigramForPosition(2, 'first'), this.getTrigramForPosition(2, 'second'));
       if (team1 && team2) {
         try {
-          const gameId = await startGame({side: 'orange', teamId1: Object.keys(team1)[0], teamId2: Object.keys(team2)[0]});
-          console.log({ gameId });
+          const gameId = await startGame({ side: 'orange', teamId1: Object.keys(team1)[0], teamId2: Object.keys(team2)[0] });
           this.setState({ gameId, gameStarted: true });
+          const score = await getScore(gameId);
+          this.setState({scores: [score[Object.keys(score)[0]].length, score[Object.keys(score)[1]].length]});
         } catch (err) {
           console.log(err);
         }
@@ -197,7 +201,7 @@ class Field extends Component {
   }
 
   render() {
-    const { team1, team2 } = this.state;
+    const { team1, team2, scores: [team1Score, team2Score] } = this.state;
     return (
       <div className="field">
         {this.getTeam(team1.id, team1.player1, team1.player2)}
@@ -208,9 +212,9 @@ class Field extends Component {
           <div className="circle goal-left" />
           <div className="circle goal-right" />
           <div className="score">
-            <span className="team2">{team2.score}</span>
+            <span className="team2">{team1Score}</span>
             {'   :   '}
-            <span className="team1">{team1.score}</span>
+            <span className="team1">{team2Score}</span>
           </div>
         </div>
         {this.getTeam(team2.id, team2.player1, team2.player2)}
