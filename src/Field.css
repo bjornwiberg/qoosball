@@ -3,8 +3,8 @@
 .field {
   font-family: 'VT323', monospace;
   height: 100vh;
+  width: 100vw;
   max-width: 100vw;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -127,3 +127,15 @@
   color: #eb9a31;
 }
 
+ @media only screen and (orientation:portrait){
+  .field {
+    height: 100vw;
+    max-height: 100vw;
+    min-width: 100vh;
+    max-width: 100vh;
+  }
+  .info {
+    max-width: 100vh;
+    max-height: 100vw;
+  }
+}
