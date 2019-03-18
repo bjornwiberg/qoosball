@@ -81,7 +81,7 @@ const getTeamById = (teamId) => {
 };
 
 const getOrCreateTeam = (trigram1, trigram2) => {
-    return Promise.all([getUserByTrigram(trigram1), getUserByTrigram(trigram1)]).then(users => { // check if users exists
+    return Promise.all([getUserByTrigram(trigram1), getUserByTrigram(trigram2)]).then(users => { // check if users exists
         if (users[0] && users[1]) {
             return getTeams().then(teams => {
                 const res = {};
