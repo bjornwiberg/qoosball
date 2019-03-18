@@ -136,7 +136,7 @@ class Field extends Component {
       this.swapTeamMembers(2)
     }
 
-    const gameOver = (team1Score === 9 || team2NewScore === 9);
+    const gameOver = (team1Score > 9 || team2NewScore > 9);
 
     this.setState({gameOver, scores: [team1NewScore, team2NewScore]});
   }
